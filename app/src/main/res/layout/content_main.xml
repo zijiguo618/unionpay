@@ -30,11 +30,34 @@
             android:text="Status" />
 
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/editText_Amount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="Name" />
+            android:hint="Amount" />
+
+        <EditText
+            android:id="@+id/editText_Currency"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:hint="Currency" />
+
+        <EditText
+            android:id="@+id/editText_verndor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:hint="Vendor" />
+        <EditText
+            android:id="@+id/editText_reference"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:hint="Reference" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.text.TextUtils;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -47,8 +48,16 @@ public class MainActivity extends BaseActivity {
     TextView Clickview;
     @BindView(R.id.textView)
     TextView Statusview;
+    @BindView(R.id.editText_Amount)
+    EditText editText_Amount;
+    @BindView(R.id.editText_reference)
+    EditText editText_reference;
+    @BindView(R.id.editText_Currency)
+    EditText editText_Currency;
+    @BindView(R.id.editText_verndor)
+    EditText editText_verndor;
 
-//    private Context mContext = null;
+
     private int mGoodsIdx = 0;
     private Handler mHandler = null;
     private ProgressDialog mLoadingDialog = null;
@@ -79,25 +88,21 @@ public class MainActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.click:
-//                Log.e("onclick_test", " " + view.getTag());
-//                mGoodsIdx = (Integer) view.getTag();
-//
-//                mLoadingDialog = ProgressDialog.show(mContext, // context
-//                        "", // title
-//                        "正在努力的获取tn中,请稍候...", // message
-//                        true); // 进度是否是不确定的，这只和创建进度条有关
-////
-//                /*************************************************
-//                 * 步骤1：从网络开始,获取交易流水号即TN
-//                 ************************************************/
-//
-//                doStartUnionPayPlugin(this, "31231314",mMode);
-                applytoapi();
+                editText_verndor.getText().toString().trim();
+                editText_Currency .getText().toString().trim();
+                editText_reference.getText().toString().trim();
+                editText_Amount.getText().toString().trim();
+
+                Log.e("editText_verndor",editText_verndor.getText().toString().trim());
+                Log.e("editText_Currency",editText_Currency.getText().toString().trim());
+                Log.e("editText_reference",editText_reference.getText().toString().trim());
+                Log.e("editText_Amount",editText_Amount.getText().toString().trim());
+                applytoapi(editText_Amount.getText().toString().trim(),editText_verndor.getText().toString().trim(),editText_Currency.getText().toString().trim(),editText_reference.getText().toString().trim());
                 break;
         }
     }
 
-    private void applytoapi() {
+    private void applytoapi(final String amount,final String venrdor,final String currency,final String reference) {
         if (TextUtils.isEmpty(Config.TOKEN)) {
             new AlertDialog.Builder(this)
                     .setTitle("Warn")
@@ -119,10 +124,10 @@ public class MainActivity extends BaseActivity {
         String dateStr = sdf.format(Calendar.getInstance().getTime());
         String url = "https://api.nihaopay.com/v1.2/transactions/apppay";
         final JsonObject jsonBody = new JsonObject();
-        jsonBody.addProperty("amount", "1");
-        jsonBody.addProperty("currency", "USD");
-        jsonBody.addProperty("vendor", "unionpay");
-        jsonBody.addProperty("reference", "reference1"+ dateStr.toString().trim());
+        jsonBody.addProperty("amount", amount);
+        jsonBody.addProperty("currency", currency);
+        jsonBody.addProperty("vendor", venrdor);
+        jsonBody.addProperty("reference", reference);
 
         jsonBody.addProperty("ipn_url", "https://demo.nihaopay.com/ipn");
         Log.e("referencenumber","reference1"+dateStr.toString().trim());
@@ -132,13 +137,8 @@ public class MainActivity extends BaseActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-
                         Statusview.setText("Response Success");
                         Log.e("Applaytoapi Response onres", response);
-                        Log.d("-----------","-----------");
-                        Log.d("substring13",response.substring(13));
-//                        Gson g =new Gson();
                         try {
                             JSONObject obj = new JSONObject(response);
                            String orderinfo= (String)obj.get("orderInfo");
@@ -149,10 +149,6 @@ public class MainActivity extends BaseActivity {
                             e2.printStackTrace();
                         }
 
-
-//                        String js = g.toJson(response);
-
-
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -161,8 +157,8 @@ public class MainActivity extends BaseActivity {
                 if (error instanceof ServerError && response != null) {
                     try {
                         String res = new String(response.data, HttpHeaderParser.parseCharset(response.headers, "utf-8"));
-                        // Now you can use any deserializer to make sense of data
                         Log.e("response zhongyu",res+"---------------------");
+                        Statusview.setText(res);
                         JSONObject obj = new JSONObject(res);
                     } catch (UnsupportedEncodingException e1) {
                         // Couldn't properly decode data to string
@@ -172,8 +168,6 @@ public class MainActivity extends BaseActivity {
                         e2.printStackTrace();
                     }
                 }
-                Log.e("Applaytoapi Response", "---------------------");
-                Statusview.setText("That didn't work!");
             }
 
         }) {
@@ -217,25 +211,4 @@ public class MainActivity extends BaseActivity {
 // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
 }
