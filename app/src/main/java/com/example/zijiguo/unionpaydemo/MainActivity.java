@@ -22,6 +22,8 @@ import com.android.volley.*;
 import com.android.volley.toolbox.*;
 import com.android.volley.NetworkResponse;
 import android.app.Activity;
+
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.text.SimpleDateFormat;
 
@@ -117,7 +119,7 @@ public class MainActivity extends BaseActivity {
         String dateStr = sdf.format(Calendar.getInstance().getTime());
         String url = "https://api.nihaopay.com/v1.2/transactions/apppay";
         final JsonObject jsonBody = new JsonObject();
-        jsonBody.addProperty("amount", "100");
+        jsonBody.addProperty("amount", "1");
         jsonBody.addProperty("currency", "USD");
         jsonBody.addProperty("vendor", "unionpay");
         jsonBody.addProperty("reference", "reference1"+ dateStr.toString().trim());
@@ -131,11 +133,26 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
+
                         Statusview.setText("Response Success");
                         Log.e("Applaytoapi Response onres", response);
                         Log.d("-----------","-----------");
                         Log.d("substring13",response.substring(13));
-                        doStartUnionPayPlugin(MainActivity.this, "663350450703226382000",mMode);
+//                        Gson g =new Gson();
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                           String orderinfo= (String)obj.get("orderInfo");
+                           Log.e("----orderInfo",orderinfo);
+                            doStartUnionPayPlugin(MainActivity.this, orderinfo,mMode);
+                        } catch (JSONException e2) {
+                            // returned data is not JSONObject?
+                            e2.printStackTrace();
+                        }
+
+
+//                        String js = g.toJson(response);
+
+
                     }
                 }, new Response.ErrorListener() {
             @Override
